@@ -1,10 +1,9 @@
-#NoEnv ; Recommended for performance and compatibility with future AutoHotkey releases.
-SendMode Input ; Recommended for new scripts due to its superior speed and reliability.
-SetWorkingDir %A_ScriptDir% ; Ensures a consistent starting directory.
-#SingleInstance, force
+﻿; REMOVED: #NoEnv ; Recommended for performance and compatibility with future AutoHotkey releases.
+SendMode("Input") ; Recommended for new scripts due to its superior speed and reliability.
+SetWorkingDir(A_ScriptDir) ; Ensures a consistent starting directory.
+#SingleInstance force
 
-#NoTrayIcon
-SetCapsLockState, AlwaysOff
+SetCapsLockState("AlwaysOff")
 
 /*
 | Shortcut                         | Output                           |
@@ -37,7 +36,7 @@ SC03a & VK0xBA::^Right ; Go one word forward
 
 SC03a & Enter::AppsKey ; Show context menu at the cursor
 
-SC03a & Esc::WinClose, A
+SC03a & Esc::WinClose("A")
 
 VK0xE2::Shift ; Remap sliced shift key back to shift
 
@@ -45,38 +44,46 @@ VK0xE2::Shift ; Remap sliced shift key back to shift
 :o:---::—
 
 SC03a::
-    If (A_PriorHotKey = A_ThisHotkey and A_TimeSincePriorHotkey < 210 and GetKeyState("SC03a", "T") = 0)
-        SetCapsLockState, AlwaysOn
-    else If (A_PriorHotKey = A_ThisHotkey and A_TimeSincePriorHotkey < 210 and GetKeyState("SC03a", "T") = 1)
-        SetCapsLockState, AlwaysOff ; Use double push to use capsLock.
-return
+    { ; V1toV2: Added bracket
+        If (A_PriorHotKey = A_ThisHotkey and A_TimeSincePriorHotkey < 210 and GetKeyState("SC03a", "T") = 0)
+            SetCapsLockState("AlwaysOn")
+        else If (A_PriorHotKey = A_ThisHotkey and A_TimeSincePriorHotkey < 210 and GetKeyState("SC03a", "T") = 1)
+            SetCapsLockState("AlwaysOff") ; Use double push to use capsLock.
+        return
 
-; SC03a & <::#^Left ; Switch windows desktop backwards
-; SC03a & >::#^Right ; Switch windows desktop forwards
+        ; SC03a & <::#^Left ; Switch windows desktop backwards
+        ; SC03a & >::#^Right ; Switch windows desktop forwards
 
-; for amazonWorkspaces
+        ; for amazonWorkspaces
+    } ; V1toV2: Added Bracket before hotkey or Hotstring
 F14::
 SC03a & SC033::
-    if (WinActive("Amazon WorkSpaces")) {
-        Gui, help: Add, Text
-        Gui, help: Show
-        Send #^{Left}
-        sleep, 100
-        Gui, help: Destroy
-    } else {
-        Send #^{Left}
-    }
-return ; Switch windows desktop backwards
+    { ; V1toV2: Added bracket
+        if (WinActive("Amazon WorkSpaces")) {
+            help := Gui()
+            help.Add("Text")
+            help.Show()
+            Send("#^{Left}")
+            Sleep(100)
+            help.Destroy()
+        } else {
+            Send("#^{Left}")
+        }
+        return ; Switch windows desktop backwards
+    } ; V1toV2: Added Bracket before hotkey or Hotstring
 
 F15::
 SC03a & SC034::
-    if (WinActive("Amazon WorkSpaces")) {
-        Gui, help: Add, Text
-        Gui, help: Show
-        Send #^{Right}
-        sleep, 100
-        Gui, help: Destroy
-    } else {
-        Send #^{Right}
-    }
-return ; Switch windows desktop forwards
+    { ; V1toV2: Added bracket
+        if (WinActive("Amazon WorkSpaces")) {
+            help := Gui()
+            help.Add("Text")
+            help.Show()
+            Send("#^{Right}")
+            Sleep(100)
+            help.Destroy()
+        } else {
+            Send("#^{Right}")
+        }
+        return ; Switch windows desktop forwards
+    } ; V1toV2: Added bracket in the end
